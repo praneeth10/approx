@@ -1,17 +1,36 @@
 \documentclass{article}
-\usepackage{kpfonts}
+% \usepackage{kpfonts}
+\usepackage{fourier}
 \usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{setspace}
 \usepackage{listing}
-% \onehalfspacing
+\onehalfspacing
 \title{Assignment1}
-\author{Praneeth Kacham}
+\author{Praneeth Kacham \\ \texttt{2015CS10600}}
 \date{}
 \newcommand{\set}[1]{\{#1\}}
 \usepackage[margin=2cm]{geometry}
 \begin{document}
 \maketitle
+\section{Question-1}
+Optimal has atmost $l$ edge-disjoint paths of length greater than length $l$. Otherwise, the graph will have $> l^2 \geq m$ edges which is a contradiction. If the greedy algorithm gives $k$ edge disjoint paths of length less than $l$, then each of the paths in optimum of length less than $l$ should intersect edges in one of these $k$ paths, otherwise greedy would have picked the path in the optimum which doesn't intersect any of these paths, and no two paths in optimum can intersect the same edge of the $k$-paths given by the greedy algorithm. As the total number of edges in the optimum is less than $kl$, we can only have atmost $kl$ disjoint paths of length less than $l$ in the optimum. So, the no. of disjoint paths in optimum is $\leq l + kl$. But $k$ is greater than 1 as $l > diameter(G)$. Hence, greedy can choose the shortest path between any of the pairs(The length will be less than $l$) which gives $k \geq 1$. So, $OPT \leq l + kl \leq kl + kl \leq 2kl \Rightarrow l \geq (1/2k)OPT$. Hence, the algorithm is a $\Omega(1/k)$-optimal algorithm.
+
 \section{Question-2}
+We are given $m$ machines and $n$ jobs each with $p_j \geq OPT/3$. Let the jobs be ordered in a way such that $p_1 \geq p_2 \geq \ldots \geq p_n$. And $k$ be the largest integer such that $p_k > 2OPT/3$. So, in the optimum solution, we have that machines which are allotted jobs 1 through $k$ are given only one job and all other machines are allotted atmost $2$ jobs. So, the total number of jobs is atmost $2n-k$. Now, the greedy algorithm, allots first $k$ jobs to $k$ machines as do the optimal solution. We claim that the greedy algorithm allots the remaining jobs to machines in the following way:
+\begin{itemize}
+\item if jobs $i$ and $j$ are allotted to $l$th machine then, $i+j = 2n+1$.
+\end{itemize}
+\begin{proof}
+The greedy algorithm allots the next $n-k$ jobs to the remaining $n-k$ machines one after another.  Now the machine with the lightest load is $n$th machine. So, greedy algorithm allots the $n+1$th job to $n$th machine and load on $nth$ machine is $\geq OPT/3+OPT/3 = 2OPT/3$. But the load on the machines $k+1\ldots n-1 \leq 2OPT/3$ as the jobs that are allotted to the machines are of size $\leq 2OPT/3$. Hence, $n+2$th job is allotted to $n-1$th machine. Now the load on $n-1$th machine is $\geq 2OPT/3$. Hence, the next job is assigned to $n-2$th machine and so on. We have atmost $2n-k$ jobs and hence in the worst case, the last job is assigned to $n-k+1$th machine. 
+
+\noindent
+Claim: There is an optimum solution which assigns the jobs as the greedy algorithm. 
+
+Let $O$ be an optimal solution. If it is same as greedy, we are done. Otherwise there exists two machines to which jobs $(i,j)$ and $(i',j')$ are assigned such that $i < i'$ and $j < j'$ (We can assume WLOG that $i < j$ and $i' < j'$). As O is optimal, $p_i + p_j < OPT$ and $p_i' + p_j' < OPT$. But $j < j' \Rightarrow p_i + p_{j'} \leq p_i + p_j \leq OPT$ and $i < i' \Rightarrow p_j + p_{i'} \leq p_j + p_i \leq OPT$. So, the schedule O' which assigns the jobs $(i,j')$ and $(i',j)$ to the machines will have makespan atmost makespan(O). But $O$ is optimal. So, makespan(O') = OPT. By continuing this we arrive at the solution given by the greedy algorithm.
+\end{proof}
+
 
 \section{Question-3}
 Let $V$ be the set of vertices and $S_1$ and $S_2$ be the parition of $V$. Pick an arbitrary vertex and put it into $S_1$. Now iterate over the remaining vertices and one after another put them into $S_1$ or
@@ -25,7 +44,7 @@ Notation: $v_i$ be the vertex picked in $i$th iteration, $S_1(i), S_2(i)$ be the
 
     True for $i = 1$ as the optimal partition has weight $0$.
     
-    Assume that the claim is true for all $k \leq i$.
+    Assume that the claim is true for all $k < i$.
     
     Without loss of generality, assume that $v_i \in S_1$. Let $(A,V(i)-A)$ be the optimal partition for $G(i)$ and $v(i) \in A$. We have $OPT(G(i)) = wt((A,V(i)-A)) = wt((A-v(i),V(i)-A))$ + contribution of $v_i$. 
     But $wt((A-v(i),V(i)-A)) \leq OPT(G(i-1))$ and contribution of $v_i \leq{}$ weight of edges incident on $v_i$ in $G(i)$. So,
@@ -46,7 +65,7 @@ So,
     &\geq \frac{1}{k}\sum_{j}wt(S_1,S_2,\ldots,S_{j-1},v_i,S_{j+1},\ldots,S_k)\\
     &\geq \frac{1}{k}(k-1)\text{wt. of edges incident on }v_i
 \end{align}
-So, given that $wt(S_1(i-1),S_2(i-1)\ldots,S_k(i-1))$ is $\geq (1-1/k)OPT(G(i-1))$ we have $wt(S_1(i),\ldots,S_j(i),\ldots,S_k(i)) = wt(S_1(i-1),S_2(i-1),\ldots,S_j(i-1)\cup v_i,\ldots,S_k(i-1)) = wt(S_1,S_2,\ldots,S_j,\ldots,S_k) + \text{contr. of }v_i \geq (1-1/k)OPT(G(i-1)) + (1-1/k)\text{wt. of edges incident on }v_i \geq (1-1/k)OPT(G(i))$.
+So, given that $wt(S_1(i-1),S_2(i-1)\ldots,S_k(i-1))$ is $\geq (1-1/k)OPT(G(i-1))$ we have $wt(S_1(i),\ldots,S_j(i),\ldots,S_k(i)) = wt(S_1(i-1),S_2(i-1),\ldots,S_j(i-1)\cup v_i,\ldots,S_k(i-1))$ $ = wt(S_1,S_2,\ldots,S_j,\ldots,S_k)$ + contr. of $v_i \geq (1-1/k)OPT(G(i-1)) + (1-1/k)$wt. of edges incident on $v_i$ $\geq (1-1/k)OPT(G(i))$.
 Hence $(S_1(n),S_2(n),\ldots,S_k(n))$ is $(1-1/k)$ approximate partition of $G(n) = G$.
 \section{Question-4}
 Let $S = \set{1,2,3,\ldots,k}$. And each of them have a coverage requirement of $\alpha_i \in \mathbb{Z}^+$. Let $\sum_{i}\alpha_i = n$. The greedy algorithm is as follows:
