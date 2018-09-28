@@ -115,8 +115,8 @@ Hence, $\phi(\epsilon) - F(x) = \sum_{j : e \in S_j \land e' \notin S_j}\alpha_j
 \end{proof}
 Consider the following algorithm:
 \begin{enumerate}
-    \item Obtain the optimal solution for LP say $(x^*,z^*)$. $x := x^*$
-    \item while($x^*$ is not binary){Pick 2 non-binary variables and round one of the two using the above procedure}
+    \item Obtain the optimal solution for LP say $(x^*,z^*)$. $x := x^*$.
+    \item while($x$ is not binary){Pick 2 non-binary variables from $x$ and round one of the two using the above procedure and assign the modified solution to $x$}.
 \end{enumerate}
 \textbf{Claim-3:} The algorithm terminates and gives a solution which is $(1-1/e)$ approximation to the optimum.
 \begin{proof}
@@ -131,7 +131,7 @@ The problem can be solved in two phases. First collect all the items from $s_i$'
 \KwOut{Modifies Tree T with items placed at Lowest Common Ancestor}
 $root \gets T.getRoot()$\;
 $subtrees \gets root.getSubtrees()$\;
-\For{$subtree in subtrees$}{
+\For{$subtree\ in\ subtrees$}{
     \uIf{subtree.hasSourceNodes()}{
         C\textlcsc{ollect}$(subtree, C)$\;
     }
