@@ -98,14 +98,14 @@ Consider a feasible $x$ for the IP. We have $x_e = 0 \ or\ 1$. Now define $z_j =
 \subsection{Part-3}
 \textbf{Claim-1:} For any feasible $(x,z)$, we have $(1 - \Pi_{e \in S_j}(1- x_e)) \geq (1 - 1/e)z_e$.
 \begin{proof}
-We have $1 - x \leq e^{-x}$. So, $\Pi_{e \in S_j}(1 - x_e) \leq e^{-\sum_{e \in S_j}x_e}$. But $z_j \leq \sum_{e \in S_j}x_e$. So, $e^{\sum_{e \in S_j}x_e} \leq e^{-z_j}$. Which implies $1 - \Pi_{e \in S_j}(1 - x_e) \geq 1 - e^{-z_j}$. Consider the function $f(x) = 1 - e^{-x}$. We have that $f(x)$ is concave, $f(0) = 0$ and $f(1) = 1-1/e$. Given that $0 \leq z_e \leq 1$ and $f$ concave, $f(z_e) \geq (1 - z_e)f(0) + z_ef(1) = z_e(1 - 1/e)$.
+We have $1 - x \leq e^{-x}$. So, $\Pi_{e \in S_j}(1 - x_e) \leq e^{-\sum_{e \in S_j}x_e}$. But $z_j \leq \sum_{e \in S_j}x_e$. So, $e^{-\sum_{e \in S_j}x_e} \leq e^{-z_j}$. Which implies $1 - \Pi_{e \in S_j}(1 - x_e) \geq 1 - e^{-z_j}$. Consider the function $f(x) = 1 - e^{-x}$. We have that $f(x)$ is concave, $f(0) = 0$ and $f(1) = 1-1/e$. Given that $0 \leq z_e \leq 1$ and $f$ concave, $f(z_e) \geq (1 - z_e)f(0) + z_ef(1) = z_e(1 - 1/e)$.
 
 So, for any feasible $(x,z)$, we have that $(1 - \Pi_{e \in S_j}(1 - x_e) \geq (1-1/e)z_e$. 
 \end{proof}
 It trivially follows from the above claim that, if $(x^*,z^*)$ is the optimal solution for LP, we have $\sum_{j}w_j(1 - \Pi_{e \in S_j}(1-x^*_e)) \geq (1 - 1/e)\sum_{j}w_jz_j^* = (1-1/e)OPT\_LP \geq (1-1/e)OPT\_IP$.
 
 \noindent
-\textbf{Claim-2} : Given any non-binary feasible solution, for any two non-binary variables $x_e$ and $x_{e'}$ and an $\epsilon$ such that $x_e + \epsilon$ and $x_{e'} - \epsilon$ also form a feasible solution and the objective value atleast the objective value with x.
+\textbf{Claim-2} : Given any non-binary feasible solution, for any two non-binary variables $x_e$ and $x_{e'}$, $\exists \epsilon$ such that $x_e + \epsilon$ and $x_{e'} - \epsilon$ also form a feasible solution and the objective value atleast the objective value with x.
 \begin{proof}
 Let $F(x)$ = $\sum_{j}w_j(1- \Pi_{e \in S_j}(1-x_{e}))$ and $\phi(\epsilon) = F((..,x_e+\epsilon,...,x_{e'}-\epsilon))$. Define $\alpha_j$ as follows:
 \begin{equation}
