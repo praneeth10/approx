@@ -1,7 +1,10 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2cm]{geometry}
-% \usepackage{kpfonts}
+% \usepackage{mathpazo}
+% \usepackage{times}
+\usepackage{newcent}
+\usepackage{inconsolata}
 \usepackage{setspace}
 \onehalfspacing
 % \usepackage{fourier}
@@ -25,7 +28,7 @@
 \maketitle
 \section{Question-1}
 \subsection{Part-1}
-Let $(U,W)$ be any partition of $V$ with $|U| = k$. Then, assign $x_i = 1\ \forall i \in U$. Consider the edge $(i,j) \in E$. If $(i,j)$ is in the cut, then $x_i \ne x_j$ i.e., $x_i = 1 \& x_j = 0$ or $x_i = 0 \& x_j = 1$. Then $x_i + x_j - 2x_ix_j = 1$ in both cases. If, edge $(i,j)$ is not in cut, then $x_i = x_j = 0 or 1$. Then $x_i + x_j - 2x_ix_j = 0$ in both cases. Thus $I[e = (i,j)\ is\ in\ cut] = x_i+x_j - 2x_ix_j$. Hence, weight of the cut = $\sum_{(i,j) \in E}w_{ij}I[(i,j)\ in\ cut] = \sum_{(i,j)\in E} w_{ij}(x_i + x_j - 2x_ix_j)$. For every cut with smaller set having $k$ elements, there is a feasible solution with the objective cost equal to weight of the cut. Now, let $x$ be a feasible solution. Define $U = \set{i | x_i = 1}$. We have $|U| = k$ and weight of the cut $(U,V) = \sum_{(i,j) \in E}w_{ij}(x_i + x_j - 2x_ix_j)$. So, for every feasible solution, there exists a cut $(U,V)$ of the weight same as the objective function. Hence, the given non-linear integer program models the maximum cut problem.
+Let $(U,W)$ be any partition of $V$ with $|U| = k$. Then, assign $x_i = 1\ \forall i \in U$. Consider the edge $(i,j) \in E$. If $(i,j)$ is in the cut, then $x_i \ne x_j$ i.e., $x_i = 1 \land x_j = 0$ or $x_i = 0 \land x_j = 1$. Then $x_i + x_j - 2x_ix_j = 1$ in both cases. If, edge $(i,j)$ is not in cut, then $x_i = x_j = 0\ or\ 1$. Then $x_i + x_j - 2x_ix_j = 0$ in both cases. Thus $I[e = (i,j)\ is\ in\ cut] = x_i+x_j - 2x_ix_j$. Hence, weight of the cut = $\sum_{(i,j) \in E}w_{ij}I[(i,j)\ in\ cut] = \sum_{(i,j)\in E} w_{ij}(x_i + x_j - 2x_ix_j)$. For every cut with smaller set having $k$ elements, there is a feasible solution with the objective cost equal to weight of the cut. Now, let $x$ be a feasible solution. Define $U = \set{i | x_i = 1}$. We have $|U| = k$ and weight of the cut $(U,V) = \sum_{(i,j) \in E}w_{ij}(x_i + x_j - 2x_ix_j)$. So, for every feasible solution, there exists a cut $(U,V)$ of the weight same as the objective function. Hence, the given non-linear integer program models the maximum cut problem.
 
 \subsection{Part-2}
 To show that the linear program is a relaxation of the non linear integer program, we have to show that the feasible region of the non-linear program is a subset of the feasible region of the linear program. Let $x$ be a feasible solution for the non-linear program. Now define $z_{ij} = x_i + x_j - 2x_ix_j$. We have $0 \le x_i \le 1$ (from feasibility of $x$ for integer non-linear program), $0 \leq z_{ij} \leq 1$(Since, it takes only 0,1 values),  $z_{ij} \le x_i + x_j$ (Since, $x_ix_j \ge 0$) and we also have $(1 - x_i)(1 - x_j) \geq 0 \Rightarrow 1 + x_ix_j \geq x_i + x_j \Rightarrow 2 - x_i - x_j \geq x_i + x_j - x_ix_j = z_{ij}$. Hence, $(x,z)$ is feasible for the linear program with the same objective function value as Integer non-linear program. So, the given LP is a relaxation of the integer non-linear program.
@@ -69,9 +72,9 @@ Let
 \end{equation*}
 and
 \begin{equation*}
-    Z_{ij} = \begin{cases}1, X_i = 1 \& X_j = 0\\ 0, otherwise\end{cases}
+    Z_{ij} = \begin{cases}1, X_i = 1 \land X_j = 0\\ 0, otherwise\end{cases}
 \end{equation*}
-$X_i$ is defined with respect to where the randomized algorithm places $i$.For a solution output by the algorithm, weight of cut is given $\sum_{(i,j) \in E}w_{ij}Z_{ij}$. So, $E[wt. of cut] = \sum_{(i,j)\in E}w_{ij}E[Z_{ij}]$. Now, $E[Z_{ij}] = P[Z_{ij} = 1] = P[X_i = 1 \& X_j = 0] = P[X_i = 1]P[X_j = 0]$ (Since, $X_i, X_j$ are independent).
+$X_i$ is defined with respect to where the randomized algorithm places $i$.For a solution output by the algorithm, weight of cut is given $\sum_{(i,j) \in E}w_{ij}Z_{ij}$. So, $E[wt. of cut] = \sum_{(i,j)\in E}w_{ij}E[Z_{ij}]$. Now, $E[Z_{ij}] = P[Z_{ij} = 1] = P[X_i = 1 \land X_j = 0] = P[X_i = 1]P[X_j = 0]$ (Since, $X_i, X_j$ are independent).
 \begin{align*}
     P[X_i = 1]P[X_j = 0] &= (1/4 + x_i/2)(1 - 1/4 - x_j/2)\\
     &= (1/4 + x_i/2)(1/4 + (1 - x_j)/2)\\
