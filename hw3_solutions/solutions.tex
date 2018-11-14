@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{algorithm}
+% \usepackage{algorithmic}
+\usepackage{caption}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{claim}{Claim}
+\newcommand{\sfunction}[1]{\textsf{\textsc{#1}}}
+% \onehalfspacing
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\set}[1]{\{#1\}}
+\begin{document}
+\section*{Question-1}
+Integer-Program
+\begin{gather*}
+    \min_{x}\quad \sum_{e}c_ex_e \\
+    \begin{aligned}
+    \textup{s.t.}\quad \sum_{e \in P_i}x_e  &\ge  1\\
+                       x_e  &\in  \set{0,1} \\
+    \end{aligned}
+\end{gather*}
+Dual of Relaxed problem
+\begin{gather*}
+    \max_{y}\quad \sum_{i=1}^ky_i \\
+    \begin{aligned}
+    \textup{s.t.}\quad \sum_{i : e \in P_i}y_i  &\le  c_e \qquad \forall e \in E\\
+                       y_i  &\ge  0 \\
+    \end{aligned}
+\end{gather*}
+\begin{algorithm}
+    \caption{Primal-Dual Algorithm for Multi-Cut problem}
+    \begin{algorithmic}
+        \Procedure{MULTICUT}{$T = (V,E), r \in V, c_e \ge 0\ \forall e, (s_i,t_i)\ i = 1\ldots n$}
+            \State $F \leftarrow \varnothing$
+            \While{$F$ is not a multi-cut}\Comment{}
+            \State $i$  be the index of the unseparated pair $(s_i,t_i)$ having highest $depth(lct(s_i,t_i))$
+            \State Increase $y_i$ such till edge $e$ becomes tight
+            \State $F \leftarrow F \cup \set{e}$
+            \EndWhile
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+In reverse delete step, go through the edges in the reverse order in which they are addded to $F$. Delete an edge $e$ if $F - \set{e}$ is a feasible multi-cut. Return $F$ finally.
+\begin{theorem}
+    \begin{equation}
+        cost(F) = \sum_{e \in F}c_e \le 2*OPT
+    \end{equation}
+\end{theorem}
+\begin{proof}
+
+    Let $y$ be the dual feasible solution given by the algorithm. Hence, $\sum_{i=1}^k y_i \leq OPT$. We also have 
+    \begin{flalign*}
+        && cost(F) &= \sum_{e \in F}{c_e} \\
+        && &= \sum_{e \in F}\sum_{i : e \in P_{i}}y_i && \text{(Since, an edge is added only when tight)}\\
+        && &= \sum_{i = 1}^ky_i |F \cap P_{i}|
+    \end{flalign*}
+\begin{claim}
+    $y_i > 0 \Rightarrow |F \cap P_i| \le 2$
+\end{claim}
+\noindent
+Suppose there is an $i$ such that $y_i > 0$ and $|F \cap P_i| > 2$. $y_i > 0$ implies that there is an edge $e \in F$ added to disconnect $s_i,t_i$. Let $u$ be the least common ancestor of $s_i$ and $t_i$. As there are more than 2 selected edges on the path $(s_i,t_i)$, we can without loss of generality assume that the
+path between $s_i$ and $u$ has atleast 2 edges in $F$. Let $e_1$ and $e_2$ be the edges in $F$ on the path
+$s_i \rightarrow u$ and $e_1$ be the edge nearest to the root $r$. As the edges are added in the decreasing order of depth of least common ancestors of unconnected pairs,
+we have $e_2$ added before $e_1$. Thus, while deleting, we see $e_1$ before $e_2$ and removing $e_2$ still disconnects $s_i,t_i$ as $e_1$ which is already in $F$ disconnects them. Hence, we get a contradiction.
+
+From the claim above, we have $y_i|F\cap P_i| \leq 2y_i$. Hence, the $cost(F) = \sum_{i = 1}^ky_i|F \cap P_i| \le \sum_{i=1}^k2y_i \leq 2OPT$.
+\end{proof}
+% \begin{algorithm}
+%     \caption{Euclid’s algorithm}\label{euclid}
+%     \begin{algorithmic}[1]
+%     \Procedure{Euclid}{$a,b$}\Comment{The g.c.d. of a and b}
+%        \State $r\gets a\bmod b$
+%        \While{$r\not=0$}\Comment{We have the answer if r is 0}
+%           \State $a\gets b$
+%           \State $b\gets r$
+%           \State $r\gets a\bmod b$
+%        \EndWhile\label{euclidendwhile}
+%        \State \textbf{return} $b$\Comment{The gcd is b}
+%     \EndProcedure
+%     \end{algorithmic}
+%     \end{algorithm}
+\section*{Question-4}
+Define $A \cdot X = \sum_{i,j}a_{ij}x_{ij}$.
+
+\noindent
+Primal SDP
+\begin{gather*}
+    \max_{X} \quad \sum_{i < j}w_{ij}(1-x_{ij})/2 \\
+    \begin{aligned}
+    \textup{s.t.}\quad x_{ii} &= 1 \quad \forall i\\
+    X &\succeq 0
+    \end{aligned}
+\end{gather*}
+Dual
+\begin{gather*}
+    \min_{\gamma} \quad \frac{1}{2}\sum_{i < j}w_{ij} + \frac{1}{4}\sum_{i}\gamma_i\\
+    \begin{aligned}
+    \textup{s.t.}\quad W + diag(\gamma) \succeq 0\\
+    \end{aligned}
+\end{gather*}
+We have $W$ is a symmetric matrix with $w_{ii} = 0$. To show weak duality, we need to show that given $X \succeq 0$, $x_{ii} = 1\ \forall i$, $W + diag(\gamma) \succeq 0$, we have
+\begin{equation*}
+    \frac{1}{2}\sum_{i < j}w_{ij}(1-x_{ij}) \leq \frac{1}{2}\sum_{i < j}w_{ij} + \frac{1}{4}\sum_{i}\gamma_i
+\end{equation*}
+\begin{lemma}
+    If $X,Y$ are positive semidefinite matrices, then $X \cdot Y \ge 0$
+\end{lemma}
+\begin{proof}
+    Given matrices $X,Y$ we have $X \cdot Y = \textup{tr}(X^TY)$. As $X,Y$ are p.s.ds, we can write $X = LL^T$ and $Y = MM^T$. Hence, tr($X^TY$) = tr($LL^TMM^T$) = tr($L^TMM^TL$) = tr($L^TM(L^TM)^T$) = $||L^TM||_{F}^2 \ge 0$. Second equality follows from the fact that tr($AB$) = tr($BA$).
+\end{proof}
+\begin{proof}
+    \begin{flalign*}
+        && \frac{1}{2}\sum_{i < j}w_{ij}(1-x_{ij}) &\leq \frac{1}{2}\sum_{i < j}w_{ij} + \frac{1}{4}\sum_{i}\gamma_i && \\
+        \Leftrightarrow && -\frac{1}{2}\sum_{i < j}w_{ij}x_{ij} &\leq \frac{1}{4}\sum_{i}\gamma_i &&\\
+        \Leftrightarrow && -\frac{1}{4}\sum_{i \ne j}w_{ij}x_{ij} &\leq \frac{1}{4}\sum_{i}\gamma_i && (\textup{Since, } x_{ij} = x_{ji}\ \&\ w_{ij} = w_{ji})\\
+        \Leftrightarrow && -\frac{1}{4}\sum_{i,j}w_{ij}x_{ij} &\leq \frac{1}{4}\sum_{i}\gamma_i && (\textup{Since, }w_{ii} = 0)\\
+        \Leftrightarrow && 0 &\leq \sum_{i,j}w_{ij}x_{ij} + \sum_{i}\gamma_i \\
+        \Leftrightarrow && 0 &\leq \sum_{i,j}w_{ij}x_{ij} + \sum_{i}\gamma_i x_{ii} && (\textup{Since, }x_{ii} = 1)\\
+        \Leftrightarrow && 0 &\leq (W + diag(\gamma))\cdot X && (\textup{Dot Product of p.s.ds is }\ge 0)
+    \end{flalign*}
+\end{proof}
+\end{document}
