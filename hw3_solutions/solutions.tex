@@ -4,12 +4,12 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{algorithm}
-% \usepackage{algorithmic}
 \usepackage{caption}
 \usepackage{algpseudocode}
 \usepackage{amssymb}
 \usepackage{float}
 \usepackage{amsthm}
+\usepackage{inconsolata}
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -20,7 +20,11 @@
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\set}[1]{\{#1\}}
+\title{Assignment-3}
+\date{}
+\author{Praneeth Kacham \\ \texttt{2015CS10600}}
 \begin{document}
+\maketitle
 \section*{Question-1}
 Integer-Program
 \begin{gather*}
@@ -76,7 +80,36 @@ Let $a \leadsto b$ denote the set of edges in the path from $a$ to $b$. Suppose 
 \end{proof}
 From the claim above, we have $y_i|F\cap P_i| \leq 2y_i$. Hence, the $cost(F) = \sum_{i = 1}^ky_i|F \cap P_i| \le \sum_{i=1}^k2y_i \leq 2OPT$.
 \end{proof}
+\section*{Question-2}
+Let $F'$ be the set of all edges initially added by the algorithm. Let $F$ be the set of edges returned by the algorithm which deletes edges in any order i.e., $F$ is a feasible solution for the problem and $\forall e \in F,\  F - \set{e}$ is not feasible. Let $C_i$ be the
+connected components in the iteration when $i$th edge is added by the primal-dual algorithm. By, $C_{i}^G \subseteq C_{i}$ denotes the connected components whose
+dual variable is increased in the $i$th iteration and define $C_{i}^N = C_{i} - C_{i}^G$. Thus, $C_{0} = \set{\set{s_i},\set{t_i}|(s_i,t_i) \in \mathcal{P}}$, $C_{0}^G = C_0$ and $C_{0}^N = \varnothing$. Define graph $G_i$ as follows: vertex set is given by $V_{i} = \set{v_j | j = 1,\ldots,|C_i|}$ and $E_{i} = \set{(v_k,v_l)|\exists (u,v) \in F, u,v \textup{ in different connected components in }C_i}$.
+
+\begin{claim}
+    $G_i$ is a forest for all $i$.
+\end{claim}
+\begin{proof}
+    It is easy to see that the vertex set of $G_i$ along with the edges $F'$ is a forest. As $F \subseteq F'$, we have that $G_i$ is
+    a forest.
+\end{proof}
+\begin{claim}
+    All vertices corresponding to the components $C_i^N$ in the graph $G_i$ have degree $\ge 2$.
+\end{claim}
+\begin{proof}
+    Suppose there is a component in $C_i^N$ with degree 1 in the graph $G_i$. Given that the component is in $C_i^N$, we have that the
+    connected coponent doesn't separate any pair $(s_i,t_i)$. So, the only edge that is coming into the connected component doesn't connect 
+    any pair $(s_i,t_i)$. Hence, this edge can be deleted from $F$ without affecting feasibility. This contradicts the fact that $F - \set{e}$ is unfeasible for all the 
+    edges $e \in \set{F}$. Hence, all vertices corresponding to the components $C_i^N$ have a degree $\ge 2$.
+\end{proof}
+\begin{theorem}
+    The algorithm is a 2-approximation to steiner-forest problem.
+\end{theorem}
+\begin{proof}
+    Using the above claims, the proof that this gives 2-approximation goes exactly like the proof of 2-approximateness of the
+    reverse-deletion algorithm.
+    \end{proof}
 \section*{Question-4}
+
 Define $A \cdot X = \sum_{i,j}a_{ij}x_{ij}$.
 
 \noindent
@@ -117,4 +150,51 @@ We have $W$ is a symmetric matrix with $w_{ii} = 0$. To show weak duality, we ne
     \end{flalign*}
     Given that the last inequality is true as both matrices are p.s.ds, we can follow the bi-implications backward and obtain what is required.
 \end{proof}
+\section*{Question-5}
+\subsection*{Part-a}
+For each vairable $x_i$ in the satisfiability problem we will have a variable $y_i$ which takes the values from the set $\set{-1,1}$. We also have a variable $y_0 \in \set{-1,1}$.
+$x_i$ is assigned the truth value TRUE if $y_i\dot y_0 = 1$ and FALSE otherwise. Let the first variable in $ith$ clause be $x_{i_1}$ and
+second variable be $x_{i_2}$. For a clause $x_1 \lor x_2$, we have the integer expression $\frac{1}{4}(3 + y_0y_1 + y_0y_2 - y_1y_2)$ and similar expressions for other forms of 2-SAT clauses. Let there be $n$ clauses.
+The following integer program models a Max-2SAT problem.
+
+\begin{gather*}
+    \max_{y} \quad \sum_{i=1}^n \frac{1}{4}w_i(3 \pm y_0y_{i_1} \pm y_0y_{i_2} \pm y_{i_1}y_{i_2})\\
+    \begin{aligned}
+    \textup{s.t.}\quad y_j \in \set{-1,1} \ \forall j
+    \end{aligned}
+\end{gather*}
+Sign of $\pm$ depends on the corresponding clause.
+\subsection*{Part-b}
+The integer program in part-a can be relaxed to get a Semi-definite program by replacing $y_j$ with vector $\vec{y_j}$ and replacing the product $y_jy_k$ with $\langle \vec{y_j}, \vec{y_k} \rangle$ and adding a condition that $||y_j||^2 = 1$.
+
+\noindent
+\textbf{Rounding the semi-definite solution:}\\
+Let $\vec{y_0}^*, \vec{y_1}^*, \ldots, \vec{y_m}^*$ be the optimal semi-definite solution. Pick a random plane given by $a^Tx = 0$. Variable $y_i$ is
+assigned 1 if $a^T\vec{y_i}^* > 0$ and -1 otherwise.
+
+\begin{claim}
+    $\forall i,j$, the following hold true
+    \begin{flalign*} 
+        E[1 + y_iy_j] &\ge 0.878[1 + \langle y_i, y_j \rangle]\\
+        E[1 - y_iy_j] &\ge 0.878[1 - \langle y_i,y_j \rangle]
+    \end{flalign*}
+\end{claim}
+\begin{proof}
+    We have the following,
+    \begin{equation}
+    y_iy_j = \begin{cases} +1 \textup{ with probability } 1 - \cos^{-1}(\langle \vec{y_i}^*, \vec{y_j}^*\rangle)/\pi \\ -1 \textup{ with probability } \cos^{-1}(\langle \vec{y_i}^*, \vec{y_j}^* \rangle)/\pi\end{cases}
+    \end{equation}
+    Hence, $E[1 + y_iy_j] = 2[1 - \cos^{-1}(\langle \vec{y_i}^*, \vec{y_j}^* \rangle)/\pi] = (2/\pi)\cos^{-1}(-\langle \vec{y_i}^*, \vec{y_j}^* \rangle) \ge 0.878(1 + \langle \vec{y_i}^*, \vec{y_j}^* \rangle)$. Similarly, we can show that the other inequality is also true.
+\end{proof}
+\begin{theorem}
+    Rounding as defined is 0.878 approximate solution for MAX-2-SAT.
+\end{theorem}
+\begin{proof}
+Consider a clause $(x_1 \lor x_2)$. The corresponding expression in terms of $y_i's$ is given by $(3 + y_1y_0 + y_2y_0 - y_1y_2)/4$. Then expression
+has value $1$ if the clause is satisfied and $0$ otherwise. The expression can also be written as $((1+y_1y_0) + (1 + y_2y_0) + (1 - y_1y_2))/4$. But, from the previous claim, $E[((1+y_1y_0) + (1 + y_2y_0) + (1 - y_1y_2))/4] \ge 0.878 ((1+\langle \vec{y_1}^*,\vec{y_0}^*\rangle) + (1 + \langle \vec{y_2}^*, \vec{y_0}^* \rangle) + (1 - \langle \vec{y_1}^*, \vec{y_2}^* \rangle))/4$. Hence, the
+expected value for integer rounding is $ \ge 0.878OPT\_SDP \ge 0.878OPT$.
+\end{proof}
+\subsection*{Part-c}
+We can combine, the 0.75 approx algorithm and MAX-2-SAT algorithm to obtain a better approximation ratio. We have that, for clauses of size greater than 3, 0.789 fraction of them are
+true in 0.75-approx algorithm and 0.75 fraction for clauses of size < 3. If,  with $\alpha$ probability 0.75 algorithm is run and $(1-\alpha)$ probability MAX-2-SDP is run, we obtain a $\min\{\alpha 0.789, \alpha 0.75 + (1 - \alpha)0.878\}$ algorithm. This is maximized when $\alpha 0.039 = (1 - \alpha)0.878 \Rightarrow \alpha = 22.5/23.5 = 0.957$ and the best approximation is $\sim$0.755.
 \end{document}
