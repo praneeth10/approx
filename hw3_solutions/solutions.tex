@@ -10,6 +10,8 @@
 \usepackage{float}
 \usepackage{amsthm}
 \usepackage{inconsolata}
+% \usepackage{mathpazo}
+\usepackage{kpfonts}
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -108,6 +110,53 @@ dual variable is increased in the $i$th iteration and define $C_{i}^N = C_{i} - 
     Using the above claims, the proof that this gives 2-approximation goes exactly like the proof of 2-approximateness of the
     reverse-deletion algorithm.
     \end{proof}
+
+\section*{Question-3}
+Notation : For $S \subseteq V$, $\delta^+(S) = \set{(i,j) \in A | i \notin S, j \in S}$. Let $\mathcal{S}$ denote the set $\set{S \subseteq V | r \notin S}$.\\
+Integer Program
+\begin{gather*}
+    \min_{x}\quad \sum_{e \in A}c_ex_e \\
+    \begin{aligned}
+    \textup{s.t.}\quad \sum_{e \in \delta^+(S)}x_e  &\ge  1 \qquad \forall S \in \mathcal{S}\\
+                       x_e  &\in  \set{0,1} \\
+    \end{aligned}
+\end{gather*}
+Dual of Relaxation
+\begin{gather*}
+    \max_{y}\quad \sum_{S \in \mathcal{S}} y_S \\
+    \begin{aligned}
+    \textup{s.t.}\quad \sum_{S: e \in \delta^+(S)}y_S  &\le  c_e \qquad \forall e \in A\\
+                       y_S  &\ge  0 \\
+    \end{aligned}
+\end{gather*}
+\begin{algorithm}
+    \caption{Primal-Dual Algorithm for MinCost Branching Problem}
+    \begin{algorithmic}
+        \Procedure{MIN-BRANCHING}{$G = (V,A), r \in V, c_e \ge 0\ \forall e$}
+            \State $F \leftarrow \varnothing$
+            \State $\mathcal{C} \leftarrow \set{\set{v} | v \in V-\set{r}}$
+            \While{$F$ is not feasible}\Comment{}
+            \State Raise the $y_S$ value for all $S \in C$ till an edge $e = (u,v)$ becomes tight
+            \State Let $u \in C_1 \in \mathcal{C}$ and $v \in C_2 \in \mathcal{C}$
+            \State $\mathcal{C} \leftarrow (\mathcal{C} - \set{C_2}) \cup \set{C_1 \cup C_2}$
+            \State $F \leftarrow F \cup \set{e}$
+            \EndWhile
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+On the set $F$ returned by the algorithm, do a reverse delete step which goes through the edges in the reverse order they are added to $F$ and delete $e$ from $F$ if 
+$F - \set{e}$ is feasible. Let $F'$ be the set finally obtained after the reverse delete step. Let $\mathcal{C}^i$ be the $\mathcal{C}$ in $i$th iteration.
+\begin{claim}
+    $\sum_{S \in \mathcal{C}^i}|\delta^+(S) \cap F'| \le |\mathcal{C}^i|$
+\end{claim}
+\begin{proof}
+    Suppose the claim doesn't hold. Then $\mathcal{D} = \set{C \in \mathcal{C}^i | |\delta^+(C) \cap F'| \ge 1}$ is non-empty. Let $C$ be a minimal element of $\mathcal{D}$ i.e., $\forall S \subset C : S \notin \mathcal{D}$. It is easy to see that $C$ cannot be set of single vertex.(We would have deleted all but one of the arcs in to the vertex in the reverse delete stage.) From algorithm, we can see that $C$ is made up of two
+    components $C_1$ and $C_2$ and one of them is still growing. Let $C_1$ be active and $C_2$ be passive. We also have that there is an edge $e \in F$ going from $C_1$ to $C_2$. From, minimality of $C$, we have $C_1 \notin \mathcal{D}$. We also have that, $C_2$ with the arcs in $F$ in ith iteration has a vertex from which all the vertices can be visited and this vertex is the end-point of the arc $e$. From this we can conclude that $|\delta^+(C) \cap \delta^+(C_1) \cap F'| \ge 1$. Let $e'$ be an arc in $\set{\delta^+(C) \cap \delta^+(C_1) \cap F'}$. Let $e'$ be added in an iteration $j$ in which a
+    component $C' \supset C_2$ was growing. But, $C_2$ was already passive which implies that there was another component $C'' \subset C'$ which was also growing. Let $e''$ be the arc which stops the component $C''$ from growing. Now in the reverse delete step, we see $e''$ before seeing $e'$. We claim that $e'$ would have been deleted in the reverse delete step. $r$ could reach all the vertices of $C_2$ using the edge $e''$. Now $e'$ is redundant as all the vertices of $C_2$ could be reached using the vertex which can reach all the vertices of $C_2$. Hence, $e'$ is deleted which contradicts our assumption.
+\end{proof}
+\begin{proof} of optimality:\\
+We have $\sum_{e \in F'}c_e = \sum_{e \in F'}\sum_{S \in \mathcal{S}: e \in \delta^+(S)}y_S = \sum_{S \in \mathcal{S}}y_S|\delta^+(S) \cap F'|$. We claim that $\sum_{S \in \mathcal{S}}y_S|\delta^+(S) \cap F'| \le \sum_{S}y_S$. We prove this by induction on iterations of the algorithm. Initially it is trivially true as both LHS and RHS are true. Assume that the inequality is true before $i$th iteration. In $ith$ iteration LHS increases by $\epsilon\sum_{S \in C^i}|\delta(S) \cap F'|$ and RHS increases by $\epsilon|C^i|$. From the claim above, we have that increase in LHS is less than increase in RHS. Hence, LHS $\le$ RHS, after the end of $i$th iteration. Hence, the algorithm is optimal.
+\end{proof}
 \section*{Question-4}
 
 Define $A \cdot X = \sum_{i,j}a_{ij}x_{ij}$.
@@ -196,5 +245,5 @@ expected value for integer rounding is $ \ge 0.878OPT\_SDP \ge 0.878OPT$.
 \end{proof}
 \subsection*{Part-c}
 We can combine, the 0.75 approx algorithm and MAX-2-SAT algorithm to obtain a better approximation ratio. We have that, for clauses of size greater than 3, 0.789 fraction of them are
-true in 0.75-approx algorithm and 0.75 fraction for clauses of size < 3. If,  with $\alpha$ probability 0.75 algorithm is run and $(1-\alpha)$ probability MAX-2-SDP is run, we obtain a $\min\{\alpha 0.789, \alpha 0.75 + (1 - \alpha)0.878\}$ algorithm. This is maximized when $\alpha 0.039 = (1 - \alpha)0.878 \Rightarrow \alpha = 22.5/23.5 = 0.957$ and the best approximation is $\sim$0.755.
+true in 0.75-approx algorithm and 0.75 fraction for clauses of size $<$ 3. If,  with $\alpha$ probability 0.75 algorithm is run and $(1-\alpha)$ probability MAX-2-SDP is run, we obtain a $\min\{\alpha 0.789, \alpha 0.75 + (1 - \alpha)0.878\}$ algorithm. This is maximized when $\alpha 0.039 = (1 - \alpha)0.878 \Rightarrow \alpha = 22.5/23.5 = 0.957$ and the best approximation is $\sim$0.755.
 \end{document}
